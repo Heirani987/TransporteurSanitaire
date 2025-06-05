@@ -1,0 +1,57 @@
+[versions]
+aaltoXml              = "1.2.2"
+agp                   = "8.10.1"
+fragmentKtx           = "1.8.8"
+kotlin                = "2.0.21"
+coreKtx               = "1.16.0"
+appcompat             = "1.7.0"
+junit                 = "4.13.2"
+junitExt              = "1.2.1"
+espressoCore          = "3.6.1"
+lifecycleRuntimeKtx   = "2.9.1"
+activityCompose       = "1.10.1"
+composeBom            = "2025.06.00"
+navigationFragmentKtx = "2.9.0"
+navigationUiKtx       = "2.9.0"
+navigation            = "2.9.0"        # pour safe args s'il est utilisé
+poi                   = "5.2.3"
+poiOoxml              = "5.2.3"
+roomVersion           = "2.7.1"
+staxApi               = "1.0-2"
+swiperefreshlayout    = "1.1.0"
+
+[libraries]
+aalto-xml                   = { module = "com.fasterxml:aalto-xml", version.ref = "aaltoXml" }
+androidx-appcompat          = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-core-ktx           = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-fragment-ktx       = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
+androidx-navigation-ui-ktx  = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
+junit                       = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit              = { group = "androidx.test.ext", name = "junit", version.ref = "junitExt" }
+androidx-espresso-core      = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-activity-compose     = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom          = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-ui                   = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-foundation   = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-material     = { group = "androidx.compose.material", name = "material" }
+androidx-material3            = { group = "androidx.compose.material3", name = "material3" }
+androidx-ui-tooling-preview   = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-ui-tooling           = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-room-runtime         = { group = "androidx.room", name = "room-runtime", version.ref = "roomVersion" }
+androidx-room-ktx             = { group = "androidx.room", name = "room-ktx", version.ref = "roomVersion" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-recyclerview         = { group = "androidx.recyclerview", name = "recyclerview", version = "1.4.0" }
+androidx-biometric            = { group = "androidx.biometric", name = "biometric", version = "1.1.0" }
+androidx-swiperefreshlayout   = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+poi                         = { module = "org.apache.poi:poi", version.ref = "poi" }
+poi-ooxml                   = { module = "org.apache.poi:poi-ooxml", version.ref = "poiOoxml" }
+stax-api                    = { module = "javax.xml.stream:stax-api", version.ref = "staxApi" }
+
+[plugins]
+android-application         = { id = "com.android.application", version.ref = "agp" }
+kotlin-android              = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose              = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+androidx-navigation-safeargs  = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }

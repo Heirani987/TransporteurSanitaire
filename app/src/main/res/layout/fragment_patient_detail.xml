@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <!-- Déclaration de la variable de binding pour le ViewModel -->
+        <variable
+            name="viewModel"
+            type="com.transporteursanitaire.ui.patientdetail.PatientDetailViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <!-- EditText pour le nom du patient -->
+        <EditText
+            android:id="@+id/editTextPatientName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:autofillHints="name"
+            android:text="@={viewModel.patientName}"
+            android:hint="@string/patient_name_hint"
+            android:enabled="false"
+            android:textSize="20sp"
+            android:minHeight="48dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- EditText pour le type de traitement -->
+        <EditText
+            android:id="@+id/editTextPatientTypeTraitement"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:autofillHints="username"
+            android:text="@={viewModel.patientTypeTraitement}"
+            android:hint="@string/patient_type_treatment_hint"
+            android:enabled="false"
+            android:textSize="16sp"
+            android:minHeight="48dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/editTextPatientName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Bouton Modifier -->
+        <Button
+            android:id="@+id/buttonEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_edit"
+            android:contentDescription="@string/button_edit_desc"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/editTextPatientTypeTraitement"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Bouton Enregistrer -->
+        <Button
+            android:id="@+id/buttonSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_save"
+            android:visibility="gone"
+            android:contentDescription="@string/button_save_desc"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/buttonEdit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

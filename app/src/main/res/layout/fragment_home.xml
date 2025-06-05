@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <!-- Variables Data Binding si nécessaire -->
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        tools:context=".ui.home.HomeFragment">
+
+        <!-- Section Profil (en haut) -->
+        <LinearLayout
+            android:id="@+id/layoutProfile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="?attr/selectableItemBackground">
+
+            <!-- Image du profil -->
+            <ImageView
+                android:id="@+id/ivProfilePicture"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_profile_placeholder"
+                android:contentDescription="@string/profile_picture" />
+
+            <!-- Nom du profil -->
+            <TextView
+                android:id="@+id/tvProfileName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/home_profile"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Bouton pour changer de profil (MaterialButton) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnChangeProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:text="@string/change_profile"
+                android:icon="@drawable/ic_arrow_drop_down"
+                app:iconGravity="textStart"
+                app:cornerRadius="8dp"
+                android:minWidth="56dp"
+                android:minHeight="56dp"
+                android:padding="16dp"/>
+        </LinearLayout>
+
+        <!-- RecyclerView qui affiche les différents écrans accessibles sous forme d'icônes -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvHomeIcons"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/layoutProfile"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:padding="16dp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

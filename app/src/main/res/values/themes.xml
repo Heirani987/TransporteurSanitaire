@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Thème clair personnalisé basé sur MaterialComponents -->
+    <style name="Theme.TransporteurSanitaire" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Définissez ici vos couleurs et autres attributs -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorSecondary">@color/teal_200</item>
+        <!-- Vous pouvez ajouter d'autres attributs spécifiques MaterialComponents -->
+    </style>
+
+    <!-- Thème sombre personnalisé basé sur MaterialComponents -->
+    <style name="Theme.TransporteurSanitaire.Dark" parent="Theme.MaterialComponents.NoActionBar">
+        <!-- Définissez ici vos couleurs pour le mode sombre -->
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorSecondary">@color/teal_200</item>
+        <!-- Vous pouvez ajouter d'autres attributs spécifiques au mode sombre -->
+    </style>
+
+</resources>
+
+    <!-- Si l'application doit changer dynamiquement de thème en fonction
+    du mode nuit activé dans le système, activer la prise en charge
+    de DayNight dans la configuration. Cela peut être fait en remplaçant
+    le parent par un thème DayNight (par exemple,
+    Theme.MaterialComponents.DayNight.NoActionBar) et en créant des ressources
+    de nuit dédiées dans le dossier values-night. -->

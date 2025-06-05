@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Éléments généraux -->
+    <string name="app_name">Transporteur Sanitaire</string>
+
+    <!-- Écran Synchronisation -->
+    <string name="sync_title">Synchronisation</string>
+    <string name="sync_no_file_selected">Aucun fichier sélectionné</string>
+    <string name="sync_browse">Sélectionner fichier Excel</string>
+    <string name="sync_update_database">Valider / MàJ</string>
+    <string name="sync_create_new_database">Créer une nouvelle base</string>
+    <string name="sync_cancel">Retour</string>
+    <string name="sync_format_non_supporte">Format non supporté</string>
+
+    <!-- Ecran HomeFragment -->
+    <string name="home_profile">Heirani Assistance</string>
+    <string name="profile_picture">Photo de profil</string>
+    <string name="change_profile">Changer de profil</string>
+    <string name="home_patients">Patients</string>
+    <string name="home_planning">Planning</string>
+    <string name="home_rdv">Rendez-vous</string>
+    <string name="home_sync">Sync</string>
+
+    <!-- Ecran Liste Patients / Import -->
+    <string name="patient_list_title">Liste des patients</string>
+    <string name="import_button_text">Charger les données</string>
+    <string name="error_invalid_path">Veuillez entrer un chemin valide.</string>
+    <string name="patient_name">Nom du Patient</string>
+    <string name="details_du_patient">Détails du patient</string>
+    <string name="autres_informations_patient">Autres informations patient</string>
+
+    <!-- Écran Placeholder -->
+    <string name="placeholder_message">Écran en développement</string>
+
+    <!-- Items pour icônes -->
+    <string name="icon_description">Icône du menu</string>
+    <string name="icon_title">Titre</string>
+
+    <!-- Indications & hints -->
+    <string name="patient_name_hint">Nom du patient</string>
+    <string name="patient_type_treatment_hint">Type de traitement</string>
+
+    <!-- Boutons -->
+    <string name="button_edit">Modifier</string>
+    <string name="button_edit_desc">Bouton Modifier</string>
+    <string name="button_save">Enregistrer</string>
+    <string name="button_save_desc">Bouton Enregistrer</string>
+
+    <!-- Ecran Patient -->
+    <string name="label_date_naissance">Date de naissance :</string>
+    <string name="label_dn">DN :</string>
+    <string name="label_tel">TEL :</string>
+    <string name="label_dep">DEP :</string>
+    <string name="label_da">DA :</string>
+    <string name="label_validite_da">Validité DA du - Validité DA AU :</string>
+    <string name="label_adresse_geo">Adresse géographique :</string>
+    <string name="label_complement_adresse">Complément adresse :</string>
+    <string name="label_pk_km_supll">PK - KM SUPLL :</string>
+    <string name="label_trajet">Trajet :</string>
+    <string name="label_point_pc_patient">Point PC Patient :</string>
+
+    <string name="attention_dep">Attention DEP</string>
+
+    <string name="validite_da_format">%1$s - %2$s</string>
+    <string name="na">N/A</string>
+</resources>

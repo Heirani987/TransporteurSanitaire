@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/homeFragment">
+
+    <!-- Écran HOME -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.transporteursanitaire.ui.home.HomeFragment"
+        android:label="Accueil"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragmentToSynchronizationFragment"
+            app:destination="@id/synchronizationFragment" />
+        <action
+            android:id="@+id/action_homeFragmentToPatientsFragment"
+            app:destination="@id/patientsFragment" />
+        <action
+            android:id="@+id/action_homeFragmentToPlanningFragment"
+            app:destination="@id/planningFragment" />
+        <action
+            android:id="@+id/action_homeFragmentToRdvFragment"
+            app:destination="@id/rdvFragment" />
+    </fragment>
+
+    <!-- Écran Synchronisation -->
+    <fragment
+        android:id="@+id/synchronizationFragment"
+        android:name="com.transporteursanitaire.ui.synchronization.SynchronizationFragment"
+        android:label="Synchronisation"
+        tools:layout="@layout/fragment_synchronization">
+        <action
+            android:id="@+id/action_synchronizationFragmentToPatientsFragment"
+            app:destination="@id/patientsFragment" />
+        <action
+            android:id="@+id/action_synchronizationFragmentToHomeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <!-- Écran File Chooser -->
+    <fragment
+        android:id="@+id/fileChooserFragment"
+        android:name="com.transporteursanitaire.ui.FileChooserFragment"
+        android:label="Sélectionner un fichier"
+        tools:layout="@layout/fragment_file_chooser" />
+
+    <!-- Écran Patients -->
+    <fragment
+        android:id="@+id/patientsFragment"
+        android:name="com.transporteursanitaire.ui.patients.PatientsFragment"
+        android:label="Patients"
+        tools:layout="@layout/fragment_patients">
+        <action
+            android:id="@+id/action_patientsFragmentToPatientDetailFragment"
+            app:destination="@id/patientDetailFragment">
+            <argument
+                android:name="patientId"
+                app:argType="integer" />
+            <argument
+                android:name="filePath"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <!-- Écran Planning -->
+    <fragment
+        android:id="@+id/planningFragment"
+        android:name="com.transporteursanitaire.ui.planning.PlanningFragment"
+        android:label="Planning"
+        tools:layout="@layout/fragment_planning" />
+
+    <!-- Écran RDV -->
+    <fragment
+        android:id="@+id/rdvFragment"
+        android:name="com.transporteursanitaire.ui.rdv.RdvFragment"
+        android:label="Rendez-vous"
+        tools:layout="@layout/fragment_rdv" />
+
+    <!-- Écran Détail Patient -->
+    <fragment
+        android:id="@+id/patientDetailFragment"
+        android:name="com.transporteursanitaire.ui.patientdetail.PatientDetailFragment"
+        android:label="Détail du Patient"
+        tools:layout="@layout/fragment_patient_detail">
+        <argument
+            android:name="patientId"
+            app:argType="integer" />
+        <argument
+            android:name="filePath"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

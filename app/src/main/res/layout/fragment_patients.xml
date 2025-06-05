@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <!-- Déclaration du ViewModel PatientsViewModel -->
+        <variable
+            name="viewModel"
+            type="com.transporteursanitaire.ui.patients.PatientsViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context=".ui.patients.PatientsFragment">
+
+        <!-- Spinner pour la sélection du patient -->
+        <Spinner
+            android:id="@+id/spinnerPatients"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:prompt="@string/patient_name_hint" />
+
+        <!-- Zone de détails du patient sélectionné -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <!-- Section Informations générales -->
+                <TextView
+                    android:id="@+id/textViewDateNaissance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_date_naissance"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textViewDN"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_dn" />
+
+                <TextView
+                    android:id="@+id/textViewTel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_tel" />
+
+                <!-- Section Informations administratives -->
+                <TextView
+                    android:id="@+id/textViewDEP"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:depWarning="@{viewModel.selectedPatient.dep}"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/textViewDA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_da" />
+
+                <TextView
+                    android:id="@+id/textViewValiditeDA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_validite_da" />
+
+                <!-- Section Informations de localisation et déplacement -->
+                <TextView
+                    android:id="@+id/textViewAdresseGeo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_adresse_geo" />
+
+                <TextView
+                    android:id="@+id/textViewComplementAdresse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_complement_adresse" />
+
+                <TextView
+                    android:id="@+id/textViewPKKM"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_pk_km_supll" />
+
+                <TextView
+                    android:id="@+id/textViewTrajet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_trajet" />
+
+                <TextView
+                    android:id="@+id/textViewPointPC"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_point_pc_patient" />
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Zone pour afficher l'état de chargement ou les erreurs -->
+        <ProgressBar
+            android:id="@+id/progressBarPatients"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center" />
+    </LinearLayout>
+</layout>
