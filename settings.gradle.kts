@@ -3,22 +3,31 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
-        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }  // Ajout du dépôt Compose
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") } // Dépôt Compose
     }
-    // Ici, vous pouvez déclarer explicitement les plugins et leurs versions si besoin
-     plugins {
-         id("com.android.application") version "8.10.1"
-         id("org.jetbrains.kotlin.android") version "2.0.21"
-         id("androidx.navigation.safeargs.kotlin") version "2.9.0"
-     }
+    // Forcer la version du plugin Safe Args via une stratégie de résolution
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "androidx.navigation.safeargs.kotlin") {
+                useVersion("2.9.0")
+            }
+        }
+    }
+    plugins {
+        id("com.android.application") version "8.10.1"
+        id("org.jetbrains.kotlin.android") version "2.0.21"
+        // Même si nous utilisons la stratégie, vous pouvez aussi déclarer le plugin ici
+        id("androidx.navigation.safeargs.kotlin") version "2.9.0"
+    }
 }
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
+//        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+        maven { url = uri("https://maven.aliyun.com/repository/public") }
         google()
         mavenCentral()
-        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }  // Ajout du dépôt Compose
     }
 }
 

@@ -2,9 +2,9 @@
 aaltoXml              = "1.2.2"
 agp                   = "8.10.1"
 fragmentKtx           = "1.8.8"
-kotlin                = "2.0.21"
+kotlin                = "1.9.22"    # pb compatibilité avec "2.0.21"
 coreKtx               = "1.16.0"
-appcompat             = "1.7.0"
+appcompat             = "1.7.1"
 junit                 = "4.13.2"
 junitExt              = "1.2.1"
 espressoCore          = "3.6.1"
@@ -30,8 +30,6 @@ androidx-navigation-ui-ktx  = { module = "androidx.navigation:navigation-ui-ktx"
 junit                       = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit              = { group = "androidx.test.ext", name = "junit", version.ref = "junitExt" }
 androidx-espresso-core      = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-activity-compose     = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom          = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui                   = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-foundation   = { group = "androidx.compose.foundation", name = "foundation" }
@@ -54,4 +52,3 @@ stax-api                    = { module = "javax.xml.stream:stax-api", version.re
 android-application         = { id = "com.android.application", version.ref = "agp" }
 kotlin-android              = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose              = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-androidx-navigation-safeargs  = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }

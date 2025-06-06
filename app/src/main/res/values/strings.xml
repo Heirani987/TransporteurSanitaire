@@ -64,4 +64,6 @@
 
     <string name="validite_da_format">%1$s - %2$s</string>
     <string name="na">N/A</string>
+
+    <string name="sync_fichier_source">Fichier source : %1$s</string>
 </resources>

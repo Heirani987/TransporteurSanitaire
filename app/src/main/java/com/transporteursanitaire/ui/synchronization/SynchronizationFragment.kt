@@ -1,6 +1,5 @@
 package com.transporteursanitaire.ui.synchronization
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -25,7 +24,8 @@ class SynchronizationFragment : Fragment() {
     private lateinit var repository: UserRepository
     private lateinit var filePickerLauncher: ActivityResultLauncher<Array<String>>
 
-    private var currentFileUri: String? = null
+    // Passage de String? à Uri? pour que l'affectation dans le callback soit détectée correctement.
+    private var currentFileUri: Uri? = null
     private var currentFileName: String? = null
 
     companion object {
@@ -35,9 +35,9 @@ class SynchronizationFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Restaurer l'état des variables sauvegardées
         savedInstanceState?.let {
-            currentFileUri = it.getString(KEY_FILE_URI)
+            // Lors de la restauration, on reconstruit l'URI à partir de sa représentation String, si disponible.
+            currentFileUri = it.getString(KEY_FILE_URI)?.let { Uri.parse(it) }
             currentFileName = it.getString(KEY_FILE_NAME)
         }
     }
@@ -53,75 +53,72 @@ class SynchronizationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         repository = UserRepository.getInstance(requireContext())
 
-        // Restaurer l'état depuis le repository si disponible
         repository.lastLoadedFileName?.let {
             currentFileName = it
-            currentFileUri = repository.lastLoadedFileUri
+            // Reconstruction de l'URI à partir de la sauvegarde dans le repository si possible.
+            currentFileUri = repository.lastLoadedFileUri?.let { Uri.parse(it) }
         }
 
-        if (currentFileName != null) {
-            binding.textViewFileName.text = "Fichier source : $currentFileName"
-            binding.buttonSync.visibility = View.VISIBLE
-        } else {
-            binding.textViewFileName.text = getString(R.string.sync_no_file_selected)
-            binding.buttonSync.visibility = View.GONE
-        }
+        updateUI()
 
-        binding.textViewTitle.text = getString(R.string.sync_title)
-        binding.buttonBrowse.text = getString(R.string.sync_browse)
-        binding.buttonCreateNew.text = getString(R.string.sync_create_new_database)
-        binding.buttonCancel.text = getString(R.string.sync_cancel)
-
-        // Enregistre le launcher pour le sélecteur de document
         filePickerLauncher = registerForActivityResult(OpenDocument()) { uri: Uri? ->
-            uri?.let {
-                val documentFile = DocumentFile.fromSingleUri(requireContext(), it)
-                val fileName = documentFile?.name ?: getString(R.string.sync_no_file_selected)
-                Log.d("SynchronizationFragment", "Fichier sélectionné (avant vérification) : $fileName")
-                if (fileName.endsWith(".xlsm", ignoreCase = true) ||
-                    fileName.endsWith(".xlsx", ignoreCase = true)
-                ) {
-                    currentFileUri = it.toString()
-                    currentFileName = fileName
-                    binding.textViewFileName.text = "Fichier source : $fileName"
-                    performImport(it.toString())
-                } else {
-                    binding.textViewError.text = getString(R.string.sync_format_non_supporte)
-                    binding.textViewError.visibility = View.VISIBLE
+            uri?.let { selectedUri ->
+                requireContext().contentResolver.openInputStream(selectedUri)?.use { stream ->
+                    val documentFile = DocumentFile.fromSingleUri(requireContext(), selectedUri)
+                    val fileName = documentFile?.name ?: getString(R.string.sync_no_file_selected)
+
+                    Log.d("SynchronizationFragment", "Fichier sélectionné : $fileName")
+
+                    if (fileName.endsWith(".xlsm", ignoreCase = true) ||
+                        fileName.endsWith(".xlsx", ignoreCase = true)
+                    ) {
+                        // Affectation de l'URI sélectionnée
+                        currentFileUri = selectedUri
+                        currentFileName = fileName
+
+                        // Sauvegarde dans le repository en conservant la représentation en String
+                        repository.lastLoadedFileUri = currentFileUri?.toString()
+                        repository.lastLoadedFileName = currentFileName
+
+                        updateUI()
+                        performImport(currentFileUri!!.toString())
+                    } else {
+                        showError(getString(R.string.sync_format_non_supporte))
+                    }
+                } ?: run {
+                    Log.e("SynchronizationFragment", "Impossible d'ouvrir le fichier sélectionné.")
+                    Toast.makeText(requireContext(), "Erreur lors de l'ouverture du fichier", Toast.LENGTH_LONG)
+                        .show()
                 }
-                Log.d("SynchronizationFragment", "Fichier sélectionné : $fileName")
             }
         }
 
-        // Bouton pour sélectionner un fichier Excel
         binding.buttonBrowse.setOnClickListener {
             if (currentFileName != null) {
-                showConfirmationDialog("changer de source", onConfirmed = { launchFilePicker() })
+                showConfirmationDialog("changer de source") { launchFilePicker() }
             } else {
                 launchFilePicker()
             }
         }
 
-        // Bouton pour créer une nouvelle base
         binding.buttonCreateNew.setOnClickListener {
             if (currentFileName != null) {
-                showConfirmationDialog("créer une nouvelle base (changer la source)", onConfirmed = { createNewBase() })
+                showConfirmationDialog("créer une nouvelle base (changer la source)") { createNewBase() }
             } else {
                 createNewBase()
             }
         }
 
-        // Bouton Sync pour mettre à jour la base
         binding.buttonSync.setOnClickListener {
-            if (currentFileUri.isNullOrEmpty()) {
-                binding.textViewError.text = getString(R.string.sync_no_file_selected)
-                binding.textViewError.visibility = View.VISIBLE
+            // On utilise repository.lastLoadedFileUri pour vérifier l'existence d'une URI.
+            val uriString = repository.lastLoadedFileUri
+            if (uriString.isNullOrEmpty()) {
+                showError(getString(R.string.sync_no_file_selected))
             } else {
-                performSync(currentFileUri!!)
+                performSync(uriString)
             }
         }
 
-        // Bouton Retour pour revenir à l'écran Home
         binding.buttonCancel.setOnClickListener {
             findNavController().navigate(
                 SynchronizationFragmentDirections.actionSynchronizationFragmentToHomeFragment()
@@ -153,14 +150,14 @@ class SynchronizationFragment : Fragment() {
         Log.d("SynchronizationFragment", "Début de l'import pour le fichier : $uri")
         try {
             repository.importPatientsFromExcel(uri)
-            Log.d("SynchronizationFragment", "Import terminé pour le fichier : $uri")
             repository.lastLoadedFileName = currentFileName
-            repository.lastLoadedFileUri = currentFileUri
+            repository.lastLoadedFileUri = uri
             Toast.makeText(requireContext(), "Base correctement chargée", Toast.LENGTH_SHORT).show()
             binding.buttonSync.visibility = View.VISIBLE
         } catch (e: Exception) {
             Log.e("SynchronizationFragment", "Erreur lors de l'import du fichier : $uri", e)
-            Toast.makeText(requireContext(), "Erreur lors du chargement", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+            showError("Une erreur s'est produite lors de l'import : ${e.localizedMessage}")
         }
     }
 
@@ -168,11 +165,10 @@ class SynchronizationFragment : Fragment() {
         Log.d("SynchronizationFragment", "Début de la synchronisation pour le fichier : $uri")
         try {
             repository.importPatientsFromExcel(uri)
-            Log.d("SynchronizationFragment", "Synchronisation réussie pour le fichier : $uri")
             Toast.makeText(requireContext(), "Synchronisation réalisée avec succès", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Log.e("SynchronizationFragment", "Erreur lors de la synchronisation du fichier : $uri", e)
-            Toast.makeText(requireContext(), "Une erreur s'est produite lors de la synchronisation", Toast.LENGTH_SHORT).show()
+            showError("Une erreur s'est produite lors de la synchronisation : ${e.localizedMessage}")
         }
     }
 
@@ -182,17 +178,31 @@ class SynchronizationFragment : Fragment() {
             currentFileName = "Suivi VSL"
             currentFileUri = null
             repository.lastLoadedFileName = currentFileName
-            repository.lastLoadedFileUri = currentFileUri
-            binding.textViewFileName.text = "Fichier source : $currentFileName"
+            repository.lastLoadedFileUri = null
+            updateUI()
             Toast.makeText(requireContext(), "Base correctement créée", Toast.LENGTH_SHORT).show()
-            binding.buttonSync.visibility = View.GONE
         } catch (e: Exception) {
-            Toast.makeText(requireContext(), "Erreur lors de la création du fichier", Toast.LENGTH_SHORT).show()
+            Log.e("SynchronizationFragment", "Erreur lors de la création de la base : ${e.message}", e)
+            e.printStackTrace()
+            showError("Une erreur s'est produite lors de la création de la base : ${e.localizedMessage}")
         }
     }
 
+    private fun updateUI() {
+        binding.textViewFileName.text = getString(
+            R.string.sync_fichier_source,
+            currentFileName ?: getString(R.string.sync_no_file_selected)
+        )
+        binding.buttonSync.visibility = if (currentFileName != null) View.VISIBLE else View.GONE
+    }
+
+    private fun showError(message: String) {
+        binding.textViewError.text = message
+        binding.textViewError.visibility = View.VISIBLE
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString(KEY_FILE_URI, currentFileUri)
+        outState.putString(KEY_FILE_URI, currentFileUri?.toString())
         outState.putString(KEY_FILE_NAME, currentFileName)
         super.onSaveInstanceState(outState)
     }

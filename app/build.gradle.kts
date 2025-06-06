@@ -6,14 +6,16 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt") // Ajout du plugin KAPT pour data binding en Kotlin
-//    alias(libs.plugins.androidx.navigation.safeargs)
 }
+
+    apply(plugin = "androidx.navigation.safeargs")
 
 android {
     namespace = "com.transporteursanitaire"
     compileSdk = 36
 
     buildFeatures {
+        compose = true
         viewBinding = true
         dataBinding = true
     }
@@ -37,16 +39,14 @@ android {
         }
     }
 
-    // Pour le runtime Android, on reste sur Java 8
-        // test avec java 17 - aligner compilateur Java avec KAPT. sinon passer jvmTarget "1.8"
+    // Configuration Java & Kotlin (JDK 17)
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
-    // Kotlin se compile avec jvmTarget 17
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "11"
     }
 }
 
@@ -55,24 +55,24 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
 
-    // Dépendances Compose en utilisant la BOM pour centraliser les versions
+    // Dépendances Compose (avec BOM pour centraliser les versions)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)              // Compose UI
-    implementation(libs.androidx.compose.foundation) // Compose Foundation
-    implementation(libs.androidx.compose.material)   // Compose Material
-    implementation(libs.androidx.material3)          // Material 3
-    implementation(libs.androidx.ui.tooling.preview)   // Tooling Preview
-    debugImplementation(libs.androidx.ui.tooling)      // Debug Tooling
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.ui.tooling.preview)
+    debugImplementation(libs.androidx.ui.tooling)
 
     // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-    // Fragment et RecyclerView (ajout des 2 dépendances supplémentaires)
+    // Fragment et RecyclerView
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.recyclerview)
 
-    // Room et Lifecycle (avec KSP pour Room si besoin)
+    // Room & Lifecycle
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
@@ -99,8 +99,7 @@ dependencies {
 }
 
 // ------------------------------
-// Configuration pour forcer l'utilisation du JDK 17 pour la compilation des tests instrumentés.
-// Cette configuration se place à la fin du fichier.
+// Configuration pour le JDK 17 (Test Instrumentés)
 tasks.withType<JavaCompile>().matching {
     it.name.startsWith("compileDebugAndroidTest")
 }.configureEach {

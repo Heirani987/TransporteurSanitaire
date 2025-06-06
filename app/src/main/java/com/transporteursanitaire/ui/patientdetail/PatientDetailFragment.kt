@@ -18,23 +18,27 @@ class PatientDetailFragment : Fragment() {
     private val binding get() = _binding!!
 
     // Utilisation explicite du type pour le delegate viewModels.
-    private val viewModel: PatientDetailViewModel by viewModels<PatientDetailViewModel>()
+    private val viewModel: PatientDetailViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPatientDetailBinding.inflate(inflater, container, false)
-        binding.viewModel = viewModel
-        // Utilisez viewLifecycleOwner pour les observateurs LiveData.
-        binding.lifecycleOwner = viewLifecycleOwner
+        _binding = FragmentPatientDetailBinding.inflate(inflater, container, false).apply {
+            viewModel = this@PatientDetailFragment.viewModel
+            lifecycleOwner = viewLifecycleOwner
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // Récupération de l'ID du patient via PatientDetailFragmentArgs (Safe Args).
-        // Vérifiez que Safe Args est correctement configuré dans votre projet.
-        val patientId = arguments?.let { bundle: Bundle -> PatientDetailFragmentArgs.fromBundle(bundle).patientId }
-        patientId?.let { id: Int -> viewModel.loadPatient(id) }
+        val patientId: Int? = arguments?.let { bundle ->
+            PatientDetailFragmentArgs.fromBundle(bundle).patientId
+        }
+
+        patientId?.let { id ->
+            viewModel.loadPatient(id)
+        }
 
         binding.buttonEdit.setOnClickListener {
             toggleEditing(true)
@@ -42,7 +46,6 @@ class PatientDetailFragment : Fragment() {
 
         binding.buttonSave.setOnClickListener {
             viewModel.updatePatient()
-            // Affiche un Toast si un message d'erreur est présent.
             viewModel.errorMessage.value?.let { msg ->
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
             }
@@ -52,13 +55,14 @@ class PatientDetailFragment : Fragment() {
 
     /**
      * Active ou désactive le mode édition pour les champs de saisie.
-     * Note : Le layout utilise désormais l'ID editTextPatientTypeTraitement pour le type de traitement.
      */
     private fun toggleEditing(enable: Boolean) {
-        binding.editTextPatientName.isEnabled = enable
-        binding.editTextPatientTypeTraitement.isEnabled = enable
-        binding.buttonEdit.visibility = if (enable) View.GONE else View.VISIBLE
-        binding.buttonSave.visibility = if (enable) View.VISIBLE else View.GONE
+        binding.apply {
+            editTextPatientName.isEnabled = enable
+            editTextPatientTypeTraitement.isEnabled = enable
+            buttonEdit.visibility = if (enable) View.GONE else View.VISIBLE
+            buttonSave.visibility = if (enable) View.VISIBLE else View.GONE
+        }
     }
 
     override fun onDestroyView() {

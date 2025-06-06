@@ -1,20 +1,16 @@
 package com.transporteursanitaire.repository
 
-import com.transporteursanitaire.data.local.PatientDatabase
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
+import com.transporteursanitaire.data.local.PatientDatabase
 import com.transporteursanitaire.data.model.Patient
 import org.apache.poi.openxml4j.opc.OPCPackage
 import org.apache.poi.poifs.filesystem.FileMagic
-import org.apache.poi.ss.usermodel.DataFormatter
-import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.ss.usermodel.Sheet
-import org.apache.poi.ss.usermodel.WorkbookFactory
-import java.io.BufferedInputStream
-import java.io.InputStream
+import org.apache.poi.ss.usermodel.*
+import java.io.*
 
 class UserRepository private constructor(private val context: Context) {
 
@@ -35,8 +31,6 @@ class UserRepository private constructor(private val context: Context) {
 
     /**
      * Importe la liste des patients depuis un fichier Excel.
-     * La feuille doit s'appeler "Planning", avec les en-têtes à la ligne 6 (index 5)
-     * et les données à partir de la ligne 7 (index 6).
      */
     fun importPatientsFromExcel(filePath: String) {
         Log.d("UserRepository", "Début de l'import du fichier Excel : $filePath")
@@ -45,105 +39,99 @@ class UserRepository private constructor(private val context: Context) {
         val fileNameDebug = docFile?.name ?: "Chemin inconnu"
         Log.d("UserRepository", "Nom du fichier : $fileNameDebug")
 
-        val rawInputStream: InputStream? = context.contentResolver.openInputStream(uri)
-        if (rawInputStream == null) {
-            Log.e("UserRepository", "Impossible d'ouvrir le fichier : $filePath")
+        context.contentResolver.openInputStream(uri)?.use { rawInputStream ->
+            val tempFile = createTempFileFromStream(rawInputStream)
+            val workbook: Workbook? = try {
+                Log.d("UserRepository", "Détection du format du fichier Excel")
+                when (FileMagic.valueOf(FileInputStream(tempFile))) {
+                    FileMagic.OLE2 -> WorkbookFactory.create(FileInputStream(tempFile))
+                    FileMagic.OOXML -> WorkbookFactory.create(FileInputStream(tempFile))
+                    else -> throw IllegalArgumentException("Format non supporté")
+                }
+            } catch (e: Exception) {
+                Log.e("UserRepository", "Erreur lors de l'ouverture du fichier Excel : ${e.message}")
+                null
+            }
+
+            workbook?.let {
+                processSheet(it.getSheet("Planning"))
+                it.close()
+            }
+        }
+    }
+
+    /**
+     * Crée un fichier temporaire à partir d'un InputStream.
+     */
+    private fun createTempFileFromStream(inputStream: InputStream): File {
+        val tempFile = File.createTempFile("excelTemp", ".xlsx", context.cacheDir)
+        tempFile.outputStream().use { outputStream ->
+            inputStream.copyTo(outputStream)
+        }
+        return tempFile
+    }
+
+    /**
+     * Traite la feuille Excel et extrait les données des patients.
+     */
+    private fun processSheet(sheet: Sheet?) {
+        if (sheet == null) {
+            Log.e("UserRepository", "Feuille 'Planning' introuvable.")
             return
         }
-        val inputStream = BufferedInputStream(rawInputStream)
 
-        try {
-            System.setProperty(
-                "javax.xml.stream.XMLEventFactory",
-                "com.fasterxml.aalto.stax.event.XMLEventFactoryImpl"
-            )
-            Log.d("UserRepository", "Propriété XMLEventFactory définie avec Aalto impl.")
+        val formatter = DataFormatter()
+        val patientList = mutableListOf<Patient>()
 
-            Log.d("UserRepository", "Fichier ouvert avec succès, démarrage du parsing")
-            val magic = FileMagic.valueOf(inputStream)
-            Log.d("UserRepository", "Format du fichier détecté : $magic")
-            val workbook = when (magic) {
-                FileMagic.OLE2 -> WorkbookFactory.create(inputStream)
-                FileMagic.OOXML -> {
-                    val opcPackage: OPCPackage = OPCPackage.open(inputStream)
-                    WorkbookFactory.create(opcPackage)
-                }
-                else -> throw IllegalArgumentException("Format non supporté : $magic")
-            }
-
-            val sheet: Sheet? = workbook.getSheet("Planning")
-            if (sheet == null) {
-                Log.e("UserRepository", "Feuille 'Planning' introuvable.")
-                workbook.close()
-                return
-            }
-
-            Log.d("UserRepository", "Nombre total de lignes dans la feuille : ${sheet.lastRowNum + 1}")
-            val formatter = DataFormatter()
-            val patientList = mutableListOf<Patient>()
-
-            Log.d("UserRepository", "Début du parsing des données (à partir de la ligne 7, index 6)")
-            for (rowIndex in 6..sheet.lastRowNum) {
-                val row: Row = sheet.getRow(rowIndex) ?: continue
-                val name = formatter.formatCellValue(row.getCell(2)).trim().ifEmpty { "Nom Inconnu" }
-                val birthDate = formatter.formatCellValue(row.getCell(3)).trim()
-                val dep = formatter.formatCellValue(row.getCell(4)).trim()
-                val da = formatter.formatCellValue(row.getCell(5)).trim()
-                val validiteDaDebut = formatter.formatCellValue(row.getCell(6)).trim()
-                val validiteDaFin = formatter.formatCellValue(row.getCell(7)).trim()
-                val transportDu = formatter.formatCellValue(row.getCell(8)).trim()
-                val transportAu = formatter.formatCellValue(row.getCell(9)).trim()
-                val adresseGeographique = formatter.formatCellValue(row.getCell(10)).trim()
-                val trajet = formatter.formatCellValue(row.getCell(11)).trim()
-                val pointPcArrivee = formatter.formatCellValue(row.getCell(12)).trim()
-                val complementAdresse = formatter.formatCellValue(row.getCell(13)).trim()
-                val tel = formatter.formatCellValue(row.getCell(14)).trim()
-                val typeTraitement = formatter.formatCellValue(row.getCell(21)).trim().ifEmpty { "Type inconnu" }
-
-                Log.d("UserRepository", "Ligne $rowIndex : name=$name, birthDate=$birthDate")
-                patientList += Patient(
-                    id = 0,
-                    name = name,
-                    birthDate = birthDate,
-                    dep = dep,
-                    da = da,
-                    validiteDaDebut = validiteDaDebut,
-                    validiteDaFin = validiteDaFin,
-                    transportDu = transportDu,
-                    transportAu = transportAu,
-                    adresseGeographique = adresseGeographique,
-                    trajet = trajet,
-                    pointPcArrivee = pointPcArrivee,
-                    complementAdresse = complementAdresse,
-                    tel = tel,
-                    typeTraitement = typeTraitement
-                )
-            }
-
-            workbook.close()
-            inputStream.close()
-
-            if (patientList.isEmpty()) {
-                Log.e("UserRepository", "Aucun patient trouvé dans le fichier importé.")
-                return
-            }
-
-            Log.d("UserRepository", "Extraction réussie : ${patientList.size} patients extraits. Début de l'insertion en base.")
-            Thread {
-                try {
-                    patientDao.insertPatients(patientList)
-                    patientListCache = patientList
-                    lastLoadedFileName = docFile?.name ?: filePath
-                    lastLoadedFileUri = filePath
-                    Log.d("UserRepository", "Import réussi : ${patientList.size} patients insérés en base.")
-                } catch (e: Exception) {
-                    Log.e("UserRepository", "Erreur lors de l'insertion dans Room : ${e.message}", e)
-                }
-            }.start()
-
-        } catch (e: Exception) {
-            Log.e("UserRepository", "Erreur lors du parsing du fichier Excel : ${e.message}", e)
+        Log.d("UserRepository", "Début du parsing des données (à partir de la ligne 7, index 6)")
+        for (rowIndex in 6..sheet.lastRowNum) {
+            val row: Row = sheet.getRow(rowIndex) ?: continue
+            patientList.add(parsePatientRow(row, formatter))
         }
+
+        if (patientList.isEmpty()) {
+            Log.e("UserRepository", "Aucun patient trouvé dans le fichier importé.")
+        } else {
+            savePatientsToDatabase(patientList)
+        }
+    }
+
+    /**
+     * Extrait les informations d'un patient à partir d'une ligne Excel.
+     */
+    private fun parsePatientRow(row: Row, formatter: DataFormatter): Patient {
+        return Patient(
+            id = 0,
+            name = formatter.formatCellValue(row.getCell(2)).trim().ifEmpty { "Nom Inconnu" },
+            birthDate = formatter.formatCellValue(row.getCell(3)).trim(),
+            dep = formatter.formatCellValue(row.getCell(4)).trim(),
+            da = formatter.formatCellValue(row.getCell(5)).trim(),
+            validiteDaDebut = formatter.formatCellValue(row.getCell(6)).trim(),
+            validiteDaFin = formatter.formatCellValue(row.getCell(7)).trim(),
+            transportDu = formatter.formatCellValue(row.getCell(8)).trim(),
+            transportAu = formatter.formatCellValue(row.getCell(9)).trim(),
+            adresseGeographique = formatter.formatCellValue(row.getCell(10)).trim(),
+            trajet = formatter.formatCellValue(row.getCell(11)).trim(),
+            pointPcArrivee = formatter.formatCellValue(row.getCell(12)).trim(),
+            complementAdresse = formatter.formatCellValue(row.getCell(13)).trim(),
+            tel = formatter.formatCellValue(row.getCell(14)).trim(),
+            typeTraitement = formatter.formatCellValue(row.getCell(21)).trim().ifEmpty { "Type inconnu" }
+        )
+    }
+
+    /**
+     * Insère les patients extraits en base de données.
+     */
+    private fun savePatientsToDatabase(patientList: List<Patient>) {
+        Thread {
+            try {
+                patientDao.insertPatients(patientList)
+                patientListCache = patientList
+                Log.d("UserRepository", "Import réussi : ${patientList.size} patients insérés.")
+            } catch (e: Exception) {
+                Log.e("UserRepository", "Erreur lors de l'insertion dans Room : ${e.message}", e)
+            }
+        }.start()
     }
 
     fun createExcelFileChooserIntent(): Intent =
@@ -161,8 +149,6 @@ class UserRepository private constructor(private val context: Context) {
 
     fun getPatientById(patientId: Int): Patient? = patientDao.getPatientById(patientId)
     fun updatePatient(patient: Patient) = patientDao.updatePatient(patient)
-    fun getPatients(): List<Patient> {
-        return patientDao.getPatients()
-    }
+    fun getPatients(): List<Patient> = patientDao.getPatients()
     fun clearDatabase() = patientDao.clearDatabase()
 }
