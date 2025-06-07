@@ -66,4 +66,14 @@
     <string name="na">N/A</string>
 
     <string name="sync_fichier_source">Fichier source : %1$s</string>
+
+    // Ecran User
+    <string name="users_title">Gestion des utilisateurs</string>
+    <string name="users_empty">Aucun utilisateur pour l’instant</string>
+    <string name="users_add">Ajouter un utilisateur</string>
+    <string name="users_edit">Modifier l’utilisateur</string>
+    <string name="users_delete">Supprimer l’utilisateur</string>
+    <string name="user_role_placeholder">Rôle utilisateur</string>
+    <string name="user_name_placeholder">Nom Utilisateur</string>
+
 </resources>

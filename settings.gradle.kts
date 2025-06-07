@@ -14,7 +14,7 @@ pluginManagement {
         }
     }
     plugins {
-        id("com.android.application") version "8.10.1"
+        id("com.android.application") version "8.1.2"
         id("org.jetbrains.kotlin.android") version "2.0.21"
         // Même si nous utilisons la stratégie, vous pouvez aussi déclarer le plugin ici
         id("androidx.navigation.safeargs.kotlin") version "2.9.0"

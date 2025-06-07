@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <!-- Nom de l'utilisateur -->
+    <TextView
+        android:id="@+id/textViewUserName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/user_name_placeholder"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textViewUserRole"
+        app:layout_constraintHorizontal_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1" />
+
+    <!-- Rôle -->
+    <TextView
+        android:id="@+id/textViewUserRole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/user_role_placeholder"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintEnd_toStartOf="@id/imageButtonEdit"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/textViewUserName"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"/>
+
+    <!-- Bouton éditer -->
+    <ImageButton
+        android:id="@+id/imageButtonEdit"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/users_edit"
+        android:src="@drawable/ic_edit_24"
+        app:layout_constraintEnd_toStartOf="@id/imageButtonDelete"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="4dp" />
+
+    <!-- Bouton supprimer -->
+    <ImageButton
+        android:id="@+id/imageButtonDelete"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/users_delete"
+        android:src="@drawable/ic_delete_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="4dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

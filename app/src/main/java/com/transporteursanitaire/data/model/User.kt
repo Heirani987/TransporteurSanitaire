@@ -1,9 +1,15 @@
 package com.transporteursanitaire.data.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "users")
 data class User(
-    val id: String,
+    @PrimaryKey val id: String,
     val name: String,
-    val role: UserRole
+    val email: String? = null,
+    val role: UserRole = UserRole.CHAUFFEUR,
+    val isActive: Boolean = true // Pour désactiver un user sans le supprimer
 )
 
 enum class UserRole {
